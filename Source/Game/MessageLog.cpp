@@ -6,6 +6,8 @@
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
+#include <cmath>
+#include <string>
 #include <sstream>
 #include <iostream>
 #include <cwctype> // iswalpha
@@ -19,10 +21,10 @@ namespace
 
 	bool isKorean(wchar_t ch)
 	{
-		return ch >= 0xac00 && ch <= 0xd7a3; // L'°¡' - L'ÆR'
+		return ch >= 0xac00 && ch <= 0xd7a3; // L'ï¿½ï¿½' - L'ï¿½R'
 	}
 
-	// ÇÑ±Û ¹ÞÄ§ °Ë»ç
+	// ï¿½Ñ±ï¿½ ï¿½ï¿½Ä§ ï¿½Ë»ï¿½
 	bool hasFinalConsonant(wchar_t ch)
 	{
 		return (ch - 0xac00) % 28 != 0;
@@ -124,11 +126,11 @@ MessageLog& MessageLog::operator<<(const std::wstring& str)
 		{
 			std::size_t verticalBar = str.find(L'|');
 
-			wchar_t ch; // ÀÌÀü ¹®ÀåÀÇ ¸¶Áö¸· ±ÛÀÚ
-			std::wstring pp; // Àº/´Â, À»/¸¦, ÀÌ/°¡, ...
+			wchar_t ch; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+			std::wstring pp; // ï¿½ï¿½/ï¿½ï¿½, ï¿½ï¿½/ï¿½ï¿½, ï¿½ï¿½/ï¿½ï¿½, ...
 
 			if (leftBracket == 0)
-				ch = static_cast<std::wstring>(messages.back().back().getString()).back();
+				ch = static_cast<std::wstring>(messages.back().back().getString().toWideString()).back();
 			else
 				ch = str[leftBracket - 1];
 
@@ -160,7 +162,7 @@ MessageLog& MessageLog::operator<<(const std::wstring& str)
 	else
 	{
 		const sf::Text& prevText = messages.back().back();
-		const std::wstring& prevStr = prevText.getString();
+		const std::wstring& prevStr = prevText.getString().toWideString();
 
 		sf::Vector2f pos = prevText.findCharacterPos(prevStr.size());
 
@@ -204,7 +206,7 @@ void MessageLog::newLine()
 
 void MessageLog::wrapText(sf::Text& text)
 {
-	std::wstring curStr = text.getString();
+	std::wstring curStr = text.getString().toWideString();
 	std::wstring nextStr;
 
 	sf::FloatRect bounds;
